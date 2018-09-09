@@ -63,13 +63,12 @@
 
 
 #include "vl53l1_platform.h"
-// #include "vl53l1_platform_log.h"
 #include "vl53l1_api.h"
 
-// #include "stm32xxx_hal.h"
-#include <string.h>
-// #include <time.h>
-// #include <math.h>
+#include <chrono>
+#include <thread>
+
+#include <pigpio.h>
 
 
 // #define I2C_TIME_OUT_BASE   10
@@ -112,93 +111,87 @@
 //    return Status;
 // }
 
-VL53L1_Error VL53L1_WriteMulti(VL53L1_DEV Dev, uint16_t index, uint8_t *pdata, uint32_t count) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
+uint32_t H(VL53L1_DEV dev) {
+   return dev->I2cHandle->dummy;
+}
+
+VL53L1_Error VL53L1_WriteMulti(VL53L1_DEV Dev, uint16_t index, uint8_t* pdata, uint32_t count) {
+   return i2cWriteBlockData(H(Dev), index, reinterpret_cast<char*>(pdata), count) ? VL53L1_ERROR_UNDEFINED : VL53L1_ERROR_NONE;
 }
 
 // the ranging_sensor_comms.dll will take care of the page selection
-VL53L1_Error VL53L1_ReadMulti(VL53L1_DEV Dev, uint16_t index, uint8_t *pdata, uint32_t count) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
+VL53L1_Error VL53L1_ReadMulti(VL53L1_DEV Dev, uint16_t index, uint8_t* pdata, uint32_t count) {
+   return i2cReadI2CBlockData(H(Dev), index, reinterpret_cast<char*>(pdata), count) ? VL53L1_ERROR_UNDEFINED : VL53L1_ERROR_NONE;
 }
 
 VL53L1_Error VL53L1_WrByte(VL53L1_DEV Dev, uint16_t index, uint8_t data) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
+   return i2cWriteByteData(H(Dev), index, data) ? VL53L1_ERROR_UNDEFINED : VL53L1_ERROR_NONE;
 }
 
 VL53L1_Error VL53L1_WrWord(VL53L1_DEV Dev, uint16_t index, uint16_t data) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
+   return i2cWriteWordData(H(Dev), index, data) ? VL53L1_ERROR_UNDEFINED : VL53L1_ERROR_NONE;
 }
 
 VL53L1_Error VL53L1_WrDWord(VL53L1_DEV Dev, uint16_t index, uint32_t data) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
+   VL53L1_Error Status = VL53L1_ERROR_NONE;
+   return Status;
 }
 
 VL53L1_Error VL53L1_UpdateByte(VL53L1_DEV Dev, uint16_t index, uint8_t AndData, uint8_t OrData) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
+   VL53L1_Error Status = VL53L1_ERROR_NONE;
+   return Status;
 }
 
-VL53L1_Error VL53L1_RdByte(VL53L1_DEV Dev, uint16_t index, uint8_t *data) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
+VL53L1_Error VL53L1_RdByte(VL53L1_DEV Dev, uint16_t index, uint8_t* data) {
+   VL53L1_Error Status = VL53L1_ERROR_NONE;
+   return Status;
 }
 
-VL53L1_Error VL53L1_RdWord(VL53L1_DEV Dev, uint16_t index, uint16_t *data) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
+VL53L1_Error VL53L1_RdWord(VL53L1_DEV Dev, uint16_t index, uint16_t* data) {
+   VL53L1_Error Status = VL53L1_ERROR_NONE;
+   return Status;
 }
 
-VL53L1_Error VL53L1_RdDWord(VL53L1_DEV Dev, uint16_t index, uint32_t *data) {
-    VL53L1_Error Status = VL53L1_ERROR_NONE;
-    return Status;
+VL53L1_Error VL53L1_RdDWord(VL53L1_DEV Dev, uint16_t index, uint32_t* data) {
+   VL53L1_Error Status = VL53L1_ERROR_NONE;
+   return Status;
 }
 
-VL53L1_Error VL53L1_GetTickCount(
-	uint32_t *ptick_count_ms)
-{
-	VL53L1_Error status  = VL53L1_ERROR_NONE;
-	return status;
+VL53L1_Error VL53L1_GetTickCount(uint32_t* ptick_count_ms) {
+   *ptick_count_ms = std::chrono::milliseconds().count();
+   return VL53L1_ERROR_NONE;
 }
 
 //#define trace_print(level, ...) \
-//	_LOG_TRACE_PRINT(VL53L1_TRACE_MODULE_PLATFORM, \
-//	level, VL53L1_TRACE_FUNCTION_NONE, ##__VA_ARGS__)
+//    _LOG_TRACE_PRINT(VL53L1_TRACE_MODULE_PLATFORM, \
+//    level, VL53L1_TRACE_FUNCTION_NONE, ##__VA_ARGS__)
 
 //#define trace_i2c(...) \
-//	_LOG_TRACE_PRINT(VL53L1_TRACE_MODULE_NONE, \
-//	VL53L1_TRACE_LEVEL_NONE, VL53L1_TRACE_FUNCTION_I2C, ##__VA_ARGS__)
+//    _LOG_TRACE_PRINT(VL53L1_TRACE_MODULE_NONE, \
+//    VL53L1_TRACE_LEVEL_NONE, VL53L1_TRACE_FUNCTION_I2C, ##__VA_ARGS__)
 
-VL53L1_Error VL53L1_GetTimerFrequency(int32_t *ptimer_freq_hz)
-{
-	VL53L1_Error status  = VL53L1_ERROR_NONE;
-	return status;
+VL53L1_Error VL53L1_GetTimerFrequency(int32_t* ptimer_freq_hz) {
+   return VL53L1_ERROR_NOT_IMPLEMENTED;
 }
 
-VL53L1_Error VL53L1_WaitMs(VL53L1_Dev_t *pdev, int32_t wait_ms){
-	VL53L1_Error status  = VL53L1_ERROR_NONE;
-	return status;
+VL53L1_Error VL53L1_WaitMs(VL53L1_Dev_t* pdev, int32_t wait_ms) {
+   std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+   return VL53L1_ERROR_NONE;
 }
 
-VL53L1_Error VL53L1_WaitUs(VL53L1_Dev_t *pdev, int32_t wait_us){
-	VL53L1_Error status  = VL53L1_ERROR_NONE;
-	return status;
+VL53L1_Error VL53L1_WaitUs(VL53L1_Dev_t* pdev, int32_t wait_us) {
+   std::this_thread::sleep_for(std::chrono::microseconds(wait_us));
+   return VL53L1_ERROR_NONE;
 }
 
 VL53L1_Error VL53L1_WaitValueMaskEx(
-	VL53L1_Dev_t *pdev,
-	uint32_t      timeout_ms,
-	uint16_t      index,
-	uint8_t       value,
-	uint8_t       mask,
-	uint32_t      poll_delay_ms)
-{
-	VL53L1_Error status  = VL53L1_ERROR_NONE;
-	return status;
+      VL53L1_Dev_t* pdev,
+      uint32_t timeout_ms,
+      uint16_t index,
+      uint8_t value,
+      uint8_t mask,
+      uint32_t poll_delay_ms) {
+   return VL53L1_ERROR_NOT_IMPLEMENTED;
 }
 
 
