@@ -67,6 +67,7 @@
 
 #include <chrono>
 #include <thread>
+#include <algorithm>
 
 #include <pigpio.h>
 
@@ -133,28 +134,51 @@ VL53L1_Error VL53L1_WrWord(VL53L1_DEV Dev, uint16_t index, uint16_t data) {
 }
 
 VL53L1_Error VL53L1_WrDWord(VL53L1_DEV Dev, uint16_t index, uint32_t data) {
-   VL53L1_Error Status = VL53L1_ERROR_NONE;
-   return Status;
+   char buffer[4];
+   buffer[3] = data >> 0 & 0xFF;
+   buffer[2] = data >> 8 & 0xFF;
+   buffer[1] = data >> 16 & 0xFF;
+   buffer[0] = data >> 24 & 0xFF;
+
+   return i2cWriteBlockData(H(Dev), index, buffer, 4) ? VL53L1_ERROR_UNDEFINED : VL53L1_ERROR_NONE;
 }
 
 VL53L1_Error VL53L1_UpdateByte(VL53L1_DEV Dev, uint16_t index, uint8_t AndData, uint8_t OrData) {
-   VL53L1_Error Status = VL53L1_ERROR_NONE;
-   return Status;
+   auto val = i2cReadByteData(H(Dev), index);
+   if(val < 0) return VL53L1_ERROR_UNDEFINED;
+
+   val = (val & AndData) | OrData;
+   return i2cWriteByteData(H(Dev), index, val) ? VL53L1_ERROR_UNDEFINED : VL53L1_ERROR_NONE;
 }
 
 VL53L1_Error VL53L1_RdByte(VL53L1_DEV Dev, uint16_t index, uint8_t* data) {
-   VL53L1_Error Status = VL53L1_ERROR_NONE;
-   return Status;
+   auto val = i2cReadByteData(H(Dev), index);
+   if(val >= 0) {
+      *data = static_cast<uint8_t>(val);
+      return VL53L1_ERROR_NONE;
+   }
+   return VL53L1_ERROR_UNDEFINED;
 }
 
 VL53L1_Error VL53L1_RdWord(VL53L1_DEV Dev, uint16_t index, uint16_t* data) {
-   VL53L1_Error Status = VL53L1_ERROR_NONE;
-   return Status;
+   auto val = i2cReadWordData(H(Dev), index);
+   if(val >= 0) {
+      *data = static_cast<uint16_t>(val);
+      return VL53L1_ERROR_NONE;
+   }
+   return VL53L1_ERROR_UNDEFINED;
 }
 
 VL53L1_Error VL53L1_RdDWord(VL53L1_DEV Dev, uint16_t index, uint32_t* data) {
-   VL53L1_Error Status = VL53L1_ERROR_NONE;
-   return Status;
+   char buffer[4];
+   auto cnt = i2cReadI2CBlockData(H(Dev), index, buffer, 4);
+
+   uint32_t word = 0;
+   for(int i = 0; i < cnt; ++i)
+      word |= buffer[3 - i] << i;
+   *data = word;
+
+   return cnt ? VL53L1_ERROR_NONE : VL53L1_ERROR_UNDEFINED;
 }
 
 VL53L1_Error VL53L1_GetTickCount(uint32_t* ptick_count_ms) {
@@ -191,7 +215,24 @@ VL53L1_Error VL53L1_WaitValueMaskEx(
       uint8_t value,
       uint8_t mask,
       uint32_t poll_delay_ms) {
-   return VL53L1_ERROR_NOT_IMPLEMENTED;
+
+
+   uint8_t data;
+   VL53L1_Error status;
+
+   while(timeout_ms > 0) {
+      status = VL53L1_RdByte(pdev, index, &data);
+
+      if(status != VL53L1_ERROR_NONE)
+         return status;
+      if((data & mask) == value)
+         return VL53L1_ERROR_NONE;
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(poll_delay_ms));
+      timeout_ms -= std::min(poll_delay_ms, timeout_ms);
+   }
+
+   return VL53L1_ERROR_TIME_OUT;
 }
 
 
