@@ -1,0 +1,17 @@
+{
+  "package": {
+    "name": "pigpio-vl53l1x",
+    "repo": "maven",
+    "subject": "jw3"
+  },
+
+  "version": {
+    "name": "PIGPIO_VERSION"
+  },
+
+  "files":
+  [
+    {"includePattern": "PIGPIO_BUILD_DIR/(.*)", "uploadPattern": "/$1"}
+  ],
+  "publish": true
+}

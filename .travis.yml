@@ -1,0 +1,42 @@
+sudo: required
+
+services:
+  - docker
+
+env:
+  global:
+    - PIGPIO_GROUP="com/github/jw3"
+    - PIGPIO_NAME="pigpio-vl53l1x"
+    - PIGPIO_VERSION="${TRAVIS_TAG:-${TRAVIS_COMMIT}}"
+    - PIGPIO_VERSION="${PIGPIO_VERSION#v}"
+    - PIGPIO_ARTIFACT="$PIGPIO_GROUP/$PIGPIO_NAME/$PIGPIO_VERSION/$PIGPIO_NAME-$PIGPIO_VERSION"
+
+script:
+  - >
+    docker run -v "$TRAVIS_BUILD_DIR:/data" jwiii/jnaerator:0.12
+    java -jar jnaerator.jar
+    -mode StandaloneJar -runtime JNA
+    -jar "/data/build/$PIGPIO_ARTIFACT.jar"
+    -library pigpio
+    -package pigpio.vl53l1x.javadsl
+    /data/api/vl53l1_api.h
+  - sudo chown -R travis:travis "$TRAVIS_BUILD_DIR"
+  - cp pom.xml "$TRAVIS_BUILD_DIR/build/$PIGPIO_ARTIFACT.pom"
+  - ls -al "$TRAVIS_BUILD_DIR/build/$PIGPIO_GROUP/$PIGPIO_NAME/$PIGPIO_VERSION"
+
+before_deploy:
+  - echo "preparing configuration for pigpio-jna $PIGPIO_VERSION"
+  - sed "s#PIGPIO_VERSION#$PIGPIO_VERSION#" -i "$TRAVIS_BUILD_DIR/build/$PIGPIO_ARTIFACT.pom"
+  - sed "s#PIGPIO_VERSION#$PIGPIO_VERSION#" -i "$TRAVIS_BUILD_DIR/bintray.json"
+  - sed "s#PIGPIO_BUILD_DIR#$TRAVIS_BUILD_DIR/build#" -i "$TRAVIS_BUILD_DIR/bintray.json"
+  - cat "$TRAVIS_BUILD_DIR/bintray.json"
+  - cat "$TRAVIS_BUILD_DIR/build/$PIGPIO_ARTIFACT.pom"
+
+deploy:
+  skip_cleanup: true
+  provider: bintray
+  file: "bintray.json"
+  user: "jw3"
+  key: "$BINTRAY_API_KEY"
+  on:
+    tags: true
