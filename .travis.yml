@@ -17,7 +17,7 @@ script:
     java -jar jnaerator.jar
     -mode StandaloneJar -runtime JNA
     -jar "/data/build/$PIGPIO_ARTIFACT.jar"
-    -library pigpio
+    -library vl53l1x
     -package pigpio.vl53l1x.javadsl
     /data/api/vl53l1_api.h
   - sudo chown -R travis:travis "$TRAVIS_BUILD_DIR"
