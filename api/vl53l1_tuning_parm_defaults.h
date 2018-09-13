@@ -13,7 +13,7 @@
 ********************************************************************************
 *
 * License terms: STMicroelectronics Proprietary in accordance with licensing
-* terms at www.api.com/sla0081
+* terms at www.st.com/sla0081
 *
 * STMicroelectronics confidential
 * Reproduction and Communication of this document is strictly prohibited unless
