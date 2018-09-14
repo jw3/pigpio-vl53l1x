@@ -152,10 +152,17 @@ VL53L1_Error VL53L1_UpdateByte(VL53L1_DEV Dev, uint16_t index, uint8_t AndData, 
 }
 
 VL53L1_Error VL53L1_RdByte(VL53L1_DEV Dev, uint16_t index, uint8_t* data) {
-   auto val = i2cReadByteData(H(Dev), index);
-   if(val >= 0) {
-      *data = static_cast<uint8_t>(val);
-      return VL53L1_ERROR_NONE;
+   char cmd[] = {
+         (char) ((index >> 8) & 0xFF),
+         (char) (index & 0xFF)
+   };
+   int status = i2cWriteDevice(H(Dev), cmd, 2);
+   if(!status) {
+      auto val = i2cReadByte(H(Dev));
+      if(val >= 0) {
+         *data = static_cast<uint8_t>(val);
+         return VL53L1_ERROR_NONE;
+      }
    }
    return VL53L1_ERROR_UNDEFINED;
 }
