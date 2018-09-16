@@ -240,20 +240,20 @@ VL53L1_Error VL53L1_GetTimerFrequency(int32_t* ptimer_freq_hz) {
    return VL53L1_ERROR_NOT_IMPLEMENTED;
 }
 
-VL53L1_Error VL53L1_WaitMs(VL53L1_Dev_t* pdev, int32_t wait_ms) {
+VL53L1_Error VL53L1_WaitMs(VL53L1_Dev_t* Dev, int32_t wait_ms) {
    printf("VL53L1_WaitMs\n");
    std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
    return VL53L1_ERROR_NONE;
 }
 
-VL53L1_Error VL53L1_WaitUs(VL53L1_Dev_t* pdev, int32_t wait_us) {
+VL53L1_Error VL53L1_WaitUs(VL53L1_Dev_t* Dev, int32_t wait_us) {
    printf("VL53L1_WaitUs\n");
    std::this_thread::sleep_for(std::chrono::microseconds(wait_us));
    return VL53L1_ERROR_NONE;
 }
 
 VL53L1_Error VL53L1_WaitValueMaskEx(
-      VL53L1_Dev_t* pdev,
+      VL53L1_Dev_t* Dev,
       uint32_t timeout_ms,
       uint16_t index,
       uint8_t value,
@@ -263,22 +263,20 @@ VL53L1_Error VL53L1_WaitValueMaskEx(
    printf("in VL53L1_WaitValueMaskEx for %d\n", index);
 
    uint8_t data;
-   VL53L1_Error status;
+   uint32_t start_time_ms;
+   uint32_t current_time_ms;
+   uint32_t polling_time_ms;
+
+   VL53L1_GetTickCount(&start_time_ms);
 
    while(timeout_ms > 0) {
-      status = VL53L1_RdByte(pdev, index, &data);
-
-      if(status != VL53L1_ERROR_NONE)
-         return status;
-
-      printf("data=%d mask=%d expected=%d\n", data, mask, value);
-      if((data & mask) == value){
-         printf("Donezo\n");
-         return VL53L1_ERROR_NONE;
-      }
+      if(auto ec = VL53L1_RdByte(Dev, index, &data)) return ec;
+      if((data & mask) == value) return VL53L1_ERROR_NONE;
 
       std::this_thread::sleep_for(std::chrono::milliseconds(poll_delay_ms));
-      timeout_ms -= std::min(poll_delay_ms, timeout_ms);
+      VL53L1_WaitMs(Dev, poll_delay_ms);
+      VL53L1_GetTickCount(&current_time_ms);
+      timeout_ms -= current_time_ms - start_time_ms;
    }
 
    return -79;
