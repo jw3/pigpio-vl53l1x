@@ -1,9 +1,18 @@
 #include <vl53l1_api.h>
 #include <pigpio.h>
 
+#include <string>
 #include <iostream>
 
 int main(int c, char** v) {
+   int budget = 20000; // us
+   int period = 55;    // ms
+   if(c == 3) {
+      budget = std::stoi(v[1]);
+      period = std::stoi(v[2]);
+   }
+   printf("range settings:\tbudget=%d\tperiod=%d\n", budget, period);
+
    if(gpioInitialise() < 0) {
       std::cout << "pigpio init failed" << std::endl;
       return 1;
@@ -57,7 +66,7 @@ int main(int c, char** v) {
    }
 
 
-   ec = VL53L1_SetDistanceMode(&Dev, VL53L1_DISTANCEMODE_LONG);
+   ec = VL53L1_SetDistanceMode(&Dev, VL53L1_DISTANCEMODE_SHORT);
    if(ec) {
       std::cerr << "VL53L1_SetDistanceMode failed " << ec << std::endl;
       i2cClose(handle);
