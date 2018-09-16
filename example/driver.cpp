@@ -49,6 +49,14 @@ int main(int c, char** v) {
       return 1;
    }
 
+   ec = VL53L1_SetPresetMode(&Dev, VL53L1_PRESETMODE_LOWPOWER_AUTONOMOUS);
+   if(ec) {
+      std::cerr << "VL53L1_SetPresetMode failed " << ec << std::endl;
+      i2cClose(handle);
+      return 1;
+   }
+
+
    ec = VL53L1_SetDistanceMode(&Dev, VL53L1_DISTANCEMODE_LONG);
    if(ec) {
       std::cerr << "VL53L1_SetDistanceMode failed " << ec << std::endl;
