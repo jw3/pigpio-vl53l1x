@@ -87,7 +87,12 @@ int main(int c, char** v) {
          ec = VL53L1_GetRangingMeasurementData(&Dev, &range);
          if(!ec)
             printf("range: %d [%d] mm\n", range.RangeMilliMeter, range.RangeStatus);
-         VL53L1_ClearInterruptAndStartMeasurement(&Dev);
+         ec = VL53L1_ClearInterruptAndStartMeasurement(&Dev);
+         if(ec) {
+            std::cerr << "VL53L1_ClearInterruptAndStartMeasurement failed " << ec << std::endl;
+            i2cClose(handle);
+            return 1;
+         }
       }
 
       VL53L1_WaitMs(&Dev, 100);
