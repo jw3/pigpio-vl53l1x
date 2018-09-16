@@ -80,7 +80,7 @@ int main(int c, char** v) {
       return 1;
    }
 
-   printf("firmware status is %d\n", ec);
+   printf("firmware status is %d\n", firmware__system_status);
 
    // firmware booted now query the model id
    command[0] = (unsigned char) ((VL53L1_IDENTIFICATION__MODEL_ID >> 8) & 0xFF);
