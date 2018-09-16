@@ -94,6 +94,10 @@ int main(int c, char** v) {
             return 1;
          }
       }
+      else {
+         printf("VL53L1_WaitMeasurementDataReady failed with %d", ec);
+         break;
+      }
 
       VL53L1_WaitMs(&Dev, 100);
    }
