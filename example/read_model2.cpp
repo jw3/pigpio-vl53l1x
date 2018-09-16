@@ -31,30 +31,30 @@ int main(int c, char** v) {
 
    //-----------------------------------
 
-   VL53L1_Error status;
+   VL53L1_Error ec;
    unsigned char command[2];
    uint8_t firmware__system_status;
 
-   status = VL53L1_WrByte(
+   ec = VL53L1_WrByte(
          &Dev,
          VL53L1_SOFT_RESET,
          0x00);
 
-   if(status) {
-      printf("enter VL53L1_SOFT_RESET failed wth %d\n", status);
+   if(ec) {
+      printf("enter VL53L1_SOFT_RESET failed wth %d\n", ec);
       i2cClose(handle);
       return 1;
    }
 
    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-   status = VL53L1_WrByte(
+   ec = VL53L1_WrByte(
          &Dev,
          VL53L1_SOFT_RESET,
          0x01);
 
-   if(status) {
-      printf("leave VL53L1_SOFT_RESET failed wth %d\n", status);
+   if(ec) {
+      printf("leave VL53L1_SOFT_RESET failed wth %d\n", ec);
       i2cClose(handle);
       return 1;
    }
@@ -63,7 +63,7 @@ int main(int c, char** v) {
    // waiting 20 iterations then bailing
 
    for(int i = 0; i < 20 && !firmware__system_status; ++i) {
-      status =
+      ec =
             VL53L1_RdByte(
                   &Dev,
                   VL53L1_FIRMWARE__SYSTEM_STATUS,
@@ -74,13 +74,13 @@ int main(int c, char** v) {
    }
    std::cerr << std::endl;
 
-   if(status) {
-      printf("firmware failed to boot with %d\n", status);
+   if(ec) {
+      printf("firmware failed to boot with %d\n", ec);
       i2cClose(handle);
       return 1;
    }
 
-   printf("firmware status is %d\n", status);
+   printf("firmware status is %d\n", ec);
 
    // firmware booted now query the model id
    command[0] = (unsigned char) ((VL53L1_IDENTIFICATION__MODEL_ID >> 8) & 0xFF);
