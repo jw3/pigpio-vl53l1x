@@ -87,6 +87,7 @@ int main(int c, char** v) {
          status = VL53L1_GetRangingMeasurementData(&Dev, &range);
          if(!status)
             printf("range: %d [%d] mm\n", range.RangeMilliMeter, range.RangeStatus);
+         VL53L1_ClearInterruptAndStartMeasurement(&Dev);
       }
 
       VL53L1_WaitMs(&Dev, 100);
