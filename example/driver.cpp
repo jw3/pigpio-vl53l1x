@@ -2,6 +2,7 @@
 #include <pigpio.h>
 
 #include <string>
+#include <chrono>
 #include <iostream>
 
 int main(int c, char** v) {
@@ -94,6 +95,8 @@ int main(int c, char** v) {
       return 1;
    }
 
+   uint32_t prevRangeT = 0;
+
    for(int i = 0; i < 100; ++i) {
       VL53L1_RangingMeasurementData_t range;
 
@@ -101,8 +104,15 @@ int main(int c, char** v) {
       if(!ec) {
          printf("measurement data ready\n");
          ec = VL53L1_GetRangingMeasurementData(&Dev, &range);
-         if(!ec)
-            printf("range: %d [%d] mm\n", range.RangeMilliMeter, range.RangeStatus);
+         if(!ec) {
+            uint32_t rangeT;
+            VL53L1_GetTickCount(&rangeT);
+            auto duration = rangeT - prevRangeT;
+
+            printf("range: %d [%d] [%i] mm\n", range.RangeMilliMeter, range.RangeStatus, duration);
+
+            prevRangeT = rangeT;
+         }
          ec = VL53L1_ClearInterruptAndStartMeasurement(&Dev);
          if(ec) {
             std::cerr << "VL53L1_ClearInterruptAndStartMeasurement failed " << ec << std::endl;
