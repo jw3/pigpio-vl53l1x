@@ -270,14 +270,18 @@ VL53L1_Error VL53L1_WaitValueMaskEx(
 
       if(status != VL53L1_ERROR_NONE)
          return status;
-      if((data & mask) == value)
+
+      printf("data=%d mask=%d expected=%d\n", data, mask, value);
+      if((data & mask) == value){
+         printf("Donezo\n");
          return VL53L1_ERROR_NONE;
+      }
 
       std::this_thread::sleep_for(std::chrono::milliseconds(poll_delay_ms));
       timeout_ms -= std::min(poll_delay_ms, timeout_ms);
    }
 
-   return VL53L1_ERROR_TIME_OUT;
+   return -79;
 }
 
 

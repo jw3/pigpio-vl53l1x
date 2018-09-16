@@ -63,7 +63,7 @@ int main(int c, char** v) {
       return 1;
    }
 
-   ec = VL53L1_SetInterMeasurementPeriodMilliSeconds(&Dev, 500);
+   ec = VL53L1_SetInterMeasurementPeriodMilliSeconds(&Dev, 55);
    if(ec) {
       std::cerr << "VL53L1_SetInterMeasurementPeriodMilliSeconds failed " << ec << std::endl;
       i2cClose(handle);
@@ -77,10 +77,9 @@ int main(int c, char** v) {
       return 1;
    }
 
-
-   VL53L1_RangingMeasurementData_t range;
-
    for(int i = 0; i < 100; ++i) {
+      VL53L1_RangingMeasurementData_t range;
+
       ec = VL53L1_WaitMeasurementDataReady(&Dev);
       if(!ec) {
          printf("measurement data ready\n");
@@ -95,11 +94,9 @@ int main(int c, char** v) {
          }
       }
       else {
-         printf("VL53L1_WaitMeasurementDataReady failed with %d", ec);
+         printf("=========================== VL53L1_WaitMeasurementDataReady failed with %d =============================", ec);
          break;
       }
-
-      VL53L1_WaitMs(&Dev, 100);
    }
 
    i2cClose(handle);
