@@ -1,4 +1,3 @@
-
 /*
 * Copyright (c) 2017, STMicroelectronics - All Rights Reserved
 *
@@ -14,7 +13,7 @@
 ********************************************************************************
 *
 * License terms: STMicroelectronics Proprietary in accordance with licensing
-* terms at www.api.com/sla0081
+* terms at www.st.com/sla0081
 *
 * STMicroelectronics confidential
 * Reproduction and Communication of this document is strictly prohibited unless
@@ -63,13 +62,18 @@
 
 
 #include "vl53l1_platform.h"
+// #include "vl53l1_platform_log.h"
 #include "vl53l1_api.h"
+// #include "stm32xxx_hal.h"
 
 #include <chrono>
 #include <thread>
 #include <algorithm>
 
 #include <pigpio.h>
+
+// #include <time.h>
+// #include <math.h>
 
 
 // #define I2C_TIME_OUT_BASE   10
@@ -258,7 +262,3 @@ VL53L1_Error VL53L1_WaitValueMaskEx(
 
    return -79;
 }
-
-
-
-
