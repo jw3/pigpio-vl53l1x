@@ -74,14 +74,14 @@ int main(int c, char** v) {
       return 1;
    }
 
-   ec = VL53L1_SetMeasurementTimingBudgetMicroSeconds(&Dev, 50000);
+   ec = VL53L1_SetMeasurementTimingBudgetMicroSeconds(&Dev, budget);
    if(ec) {
       std::cerr << "VL53L1_SetMeasurementTimingBudgetMicroSeconds failed " << ec << std::endl;
       i2cClose(handle);
       return 1;
    }
 
-   ec = VL53L1_SetInterMeasurementPeriodMilliSeconds(&Dev, 55);
+   ec = VL53L1_SetInterMeasurementPeriodMilliSeconds(&Dev, period);
    if(ec) {
       std::cerr << "VL53L1_SetInterMeasurementPeriodMilliSeconds failed " << ec << std::endl;
       i2cClose(handle);
@@ -109,7 +109,7 @@ int main(int c, char** v) {
             VL53L1_GetTickCount(&rangeT);
             auto duration = rangeT - prevRangeT;
 
-            printf("range: %d [%d] [%i] mm\n", range.RangeMilliMeter, range.RangeStatus, duration);
+            printf("range: %dmm [%d] [%i] \n", range.RangeMilliMeter, range.RangeStatus, duration);
 
             prevRangeT = rangeT;
          }
