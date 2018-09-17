@@ -7,7 +7,9 @@ Using VL53L1X API [v2.3.3](https://www.st.com/content/st_com/en/products/embedde
 
 The `example/driver` executable will perform a simple usage of the sensor
 
-`driver 20000 25`
+Can pass in the timing budget (us) and interval (ms) as arg 1 and 2 respectively
+
+So for example, `driver 20 24`
 
 
 ### java bindings
@@ -19,7 +21,7 @@ The Travis build publishes a JNA based Java API for this driver to bintray
 
 
 ### references
-- [reference documentation](doc/README.md)
+- [reference documentation](doc)
 - https://www.pololu.com/product/3415
 - http://www.robot-electronics.co.uk/i2c-tutorial
 - https://www.st.com/resource/en/data_brief/stsw-img007.pdf
@@ -33,7 +35,7 @@ The Travis build publishes a JNA based Java API for this driver to bintray
 - https://github.com/pololu/vl53l1x-st-api-arduino
 
 
-### ranging modes [reference](https://community.st.com/s/question/0D50X00009XkWSGSA3/vl53l1x-timing-issue)
+### ranging modes [\[reference\]](https://community.st.com/s/question/0D50X00009XkWSGSA3/vl53l1x-timing-issue)
 - VL53L1_PRESETMODE_LITE_RANGING
   - Does a range A; Provides result;  does a range B; provides Result
   - Needs the VL53L1_ClearInterruptAndStartMeasurement to continue

@@ -9,11 +9,11 @@ int main(int c, char** v) {
    int budget = 20000; // us
    int period = 55;    // ms
    if(c == 3) {
-      budget = std::stoi(v[1]);
+      budget = std::stoi(v[1]) * 1000;
       period = std::stoi(v[2]);
    }
-   std::cout << "range timing budget: " << budget << std::endl;
-   std::cout << "range timing period: " << period << std::endl;
+   std::cout << "range timing budget (us): " << budget << std::endl;
+   std::cout << "range timing period (ms): " << period << std::endl;
 
    if(gpioInitialise() < 0) {
       std::cerr << "pigpio init failed" << std::endl;
