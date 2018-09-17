@@ -5,9 +5,9 @@ Using VL53L1X API [v2.3.3](https://www.st.com/content/st_com/en/products/embedde
 
 ### driver
 
-The `example/driver` executable will perform a simple usage of the driver
+The `example/driver` executable will perform a simple usage of the sensor
 
-`sudo ./example/driver 20000 25 | grep range`
+`driver 20000 25`
 
 
 ### java bindings
@@ -34,9 +34,10 @@ The Travis build publishes a JNA based Java API for this driver to bintray
 
 
 ### ranging modes [reference](https://community.st.com/s/question/0D50X00009XkWSGSA3/vl53l1x-timing-issue)
-- L53L1_PRESETMODE_LITE_RANGING
+- VL53L1_PRESETMODE_LITE_RANGING
   - Does a range A; Provides result;  does a range B; provides Result
-  - Needs the VL53L1_ClearInterruptAndStartMeasurement to continue – 10ms min timing budget in SHORT mode, 16ms with LONG mode
+  - Needs the VL53L1_ClearInterruptAndStartMeasurement to continue
+  - 10ms min timing budget in SHORT mode, 16ms with LONG mode
   - This is best for predictable timing. But the timing here is for only the range A or B, not both
 - VL53L1_PRESETMODE_AUTONOMOUS
   - Does a range A, then range B
@@ -49,3 +50,12 @@ The Travis build publishes a JNA based Java API for this driver to bintray
   - Intermeasurement period should be 5ms longer than the timing budget
 
 For consistent timing and the fastest results use LITE_RANGING mode.
+
+### investigate
+- SignalRateRtnMegaCps
+  - Return signal rate (MCPS)\n these is a 16.16 fix point value, which is effectively a measure of target reflectance.
+- AmbientRateRtnMegaCps
+  - Return ambient rate (MCPS)\n these is a 16.16 fix point value, which is effectively a measure of the ambient light.
+- RangeQualityLevel
+  - indicate a quality level in percentage from 0 to 100
+  - Not yet supported by ST API

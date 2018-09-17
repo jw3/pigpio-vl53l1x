@@ -12,10 +12,11 @@ int main(int c, char** v) {
       budget = std::stoi(v[1]);
       period = std::stoi(v[2]);
    }
-   printf("range settings:\tbudget=%d\tperiod=%d\n", budget, period);
+   std::cout << "range timing budget: " << budget << std::endl;
+   std::cout << "range timing period: " << period << std::endl;
 
    if(gpioInitialise() < 0) {
-      std::cout << "pigpio init failed" << std::endl;
+      std::cerr << "pigpio init failed" << std::endl;
       return 1;
    }
 
@@ -33,8 +34,7 @@ int main(int c, char** v) {
 
    uint8_t model_id;
    VL53L1_RdByte(&Dev, VL53L1_IDENTIFICATION__MODEL_ID, &model_id);
-   printf("VL53L1X Model_ID: %d\n", model_id);
-
+   std::cout << "VL53L1X Model_ID: 0x" << std::hex << static_cast<int>(model_id) << std::endl;
 
    int ec;
 
@@ -95,34 +95,44 @@ int main(int c, char** v) {
       return 1;
    }
 
-   uint32_t prevRangeT = 0;
+   std::cout << std::dec;
+   std::cout << "starting measurements" << std::endl;
 
+   uint32_t prevRangeT = 0;
    for(int i = 0; i < 100; ++i) {
       VL53L1_RangingMeasurementData_t range;
 
       ec = VL53L1_WaitMeasurementDataReady(&Dev);
       if(!ec) {
-         printf("measurement data ready\n");
          ec = VL53L1_GetRangingMeasurementData(&Dev, &range);
          if(!ec) {
             uint32_t rangeT;
             VL53L1_GetTickCount(&rangeT);
-            auto duration = rangeT - prevRangeT;
+            auto interval = rangeT - prevRangeT;
 
-            printf("range: %dmm [%d] [%i] \n", range.RangeMilliMeter, range.RangeStatus, duration);
+            std::cout << "range: " << range.RangeMilliMeter
+                      // quality not yet implemented
+                      // << " quality: " << range.RangeQualityLevel
+                      << " interval: " << interval;
+
+            if(range.RangeStatus)
+               std::cout << " status: " << static_cast<int>(range.RangeStatus);
+
+            std::cout << std::endl;
 
             prevRangeT = rangeT;
          }
          ec = VL53L1_ClearInterruptAndStartMeasurement(&Dev);
          if(ec) {
-            std::cerr << "VL53L1_ClearInterruptAndStartMeasurement failed " << ec << std::endl;
+            std::cerr << "VL53L1_ClearInterruptAndStartMeasurement failed with " << ec << std::endl;
             i2cClose(handle);
             return 1;
          }
       }
       else {
-         printf("=========================== VL53L1_WaitMeasurementDataReady failed with %d =============================", ec);
-         break;
+         std::cerr << "VL53L1_WaitMeasurementDataReady failed with " << ec << std::endl;
+         i2cClose(handle);
+         return 1;
       }
    }
 
