@@ -59,7 +59,7 @@ int main(int c, char** v) {
       return 1;
    }
 
-   ec = VL53L1_SetPresetMode(&Dev, VL53L1_PRESETMODE_LOWPOWER_AUTONOMOUS);
+   ec = VL53L1_SetPresetMode(&Dev, VL53L1_PRESETMODE_LITE_RANGING);
    if(ec) {
       std::cerr << "VL53L1_SetPresetMode failed " << ec << std::endl;
       i2cClose(handle);
