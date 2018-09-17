@@ -223,7 +223,11 @@ VL53L1_Error VL53L1_RdDWord(VL53L1_DEV Dev, uint16_t index, uint32_t* data) {
 
 VL53L1_Error VL53L1_GetTickCount(uint32_t* ptick_count_ms) {
    printf("VL53L1_GetTickCount\n");
-   *ptick_count_ms = std::chrono::milliseconds().count();
+   *ptick_count_ms = static_cast<uint32_t>(
+         std::chrono::time_point_cast<std::chrono::milliseconds>(
+               std::chrono::steady_clock::now()
+         ).time_since_epoch().count()
+   );
    return VL53L1_ERROR_NONE;
 }
 
