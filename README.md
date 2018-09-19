@@ -7,7 +7,7 @@ Using VL53L1X API [v2.3.3](https://www.st.com/content/st_com/en/products/embedde
 
 The `example/driver` executable will perform a simple usage of the sensor
 
-Can pass in the timing budget (us) and interval (ms) as arg 1 and 2 respectively
+Can pass in the timing budget and interval (both in ms) as arg 1 and 2 respectively
 
 So for example, `driver 20 24`
 
