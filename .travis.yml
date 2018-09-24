@@ -19,7 +19,7 @@ script:
     -jar "/data/build/$PIGPIO_ARTIFACT.jar"
     -library vl53l1x
     -package pigpio.vl53l1x.javadsl
-    /data/api/vl53l1_api.h
+    /data/api/vl53l1_api.h /data/api/platform/vl53l1_platform.h
   - sudo chown -R travis:travis "$TRAVIS_BUILD_DIR"
   - cp pom.xml "$TRAVIS_BUILD_DIR/build/$PIGPIO_ARTIFACT.pom"
   - ls -al "$TRAVIS_BUILD_DIR/build/$PIGPIO_GROUP/$PIGPIO_NAME/$PIGPIO_VERSION"
