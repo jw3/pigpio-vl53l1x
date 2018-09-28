@@ -63,3 +63,5 @@ For consistent timing and the fastest results use LITE_RANGING mode.
   - Not yet supported by ST API
 - VL53L1_SetDeviceAddress
   - divides the specified address by two
+  - MODIFIED This behavior to use the address that is passed
+  - todo; should bounds check, only 7 bits are supported in address
