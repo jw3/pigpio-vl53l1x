@@ -61,3 +61,5 @@ For consistent timing and the fastest results use LITE_RANGING mode.
 - RangeQualityLevel
   - indicate a quality level in percentage from 0 to 100
   - Not yet supported by ST API
+- VL53L1_SetDeviceAddress
+  - divides the specified address by two
