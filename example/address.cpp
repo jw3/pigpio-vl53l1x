@@ -27,7 +27,7 @@ int main(int c, char** v) {
       auto handle = i2cOpen(1, 0x29, 0);
       VL53L1_Dev_t Dev;
       Dev.I2cHandle = new I2C_HandleTypeDef{static_cast<uint32_t>(handle)};
-      VL53L1_SetDeviceAddress(&Dev, addr2 * 2);
+      VL53L1_SetDeviceAddress(&Dev, addr2);
       i2cClose(handle);
    }
    {
